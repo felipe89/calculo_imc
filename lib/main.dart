@@ -16,12 +16,18 @@ void main () {
      TextEditingController weightController = TextEditingController();
      TextEditingController heightController = TextEditingController();
 
-     String _infoText = "Informe seu peso e altura";
+     String _infoText = "Informe seu Peso";
+
+     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
 
      void _resetFields() {
        weightController.text = "";
        heightController.text = "";
-       _infoText = "Informe seu peso e altura";
+
+       setState(() {
+         _infoText = "Informe seu Peso";
+       });
      }
 
        void _calculate() {
@@ -29,7 +35,6 @@ void main () {
            double weight = double.parse(weightController.text);
            double height = double.parse(heightController.text) / 100;
            double imc = weight / (height * height);
-           print(imc);
 
            if (imc < 18.6) {
              _infoText = "Abaixo do Peso (${imc.toStringAsPrecision(4)})";
@@ -54,7 +59,7 @@ void main () {
              appBar: AppBar(
                title: Text("Calculadora IMC"),
                centerTitle: true,
-               backgroundColor: Colors.green,
+               backgroundColor: Colors.blueAccent,
                actions: <Widget>[
                  IconButton(icon: Icon(Icons.refresh),
                    onPressed: _resetFields,
@@ -64,48 +69,65 @@ void main () {
              backgroundColor: Colors.white,
              body: SingleChildScrollView(
                padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-               child: Column(
-                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                 children: <Widget>[
-                   Icon(
-                       Icons.person_pin, size: 120.0, color: Colors.blueAccent),
-                   TextField(
-                     keyboardType: TextInputType.number,
-                     decoration: InputDecoration(
-                         labelText: "Peso (Kg):",
-                         labelStyle: TextStyle(color: Colors.blueAccent)),
-                     textAlign: TextAlign.center,
-                     style: TextStyle(color: Colors.blueAccent, fontSize: 25.0),
-                     controller: weightController,
-                   ),
-                   TextField(
-                     keyboardType: TextInputType.number,
-                     decoration: InputDecoration(
-                         labelText: "Altura (Cm):",
-                         labelStyle: TextStyle(color: Colors.blueAccent)),
-                     textAlign: TextAlign.center,
-                     style: TextStyle(color: Colors.blueAccent, fontSize: 25.0),
-                     controller: heightController,
-                   ),
-                   Padding(
-                     padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-                     child: Container(
-                       height: 50.0,
-                       child: RaisedButton(
-                           onPressed: _calculate,
-                           child: Text("Calcular",
-                             style: TextStyle(
-                                 color: Colors.white, fontSize: 25.0),),
-                           color: Colors.blueAccent
+               child: Form(
+                 key: _formKey,
+                 child:Column(
+                   crossAxisAlignment: CrossAxisAlignment.stretch,
+                   children: <Widget>[
+                     Icon(
+                         Icons.person_pin, size: 120.0, color: Colors.blueAccent),
+                     TextFormField(
+                       keyboardType: TextInputType.number,
+                       decoration: InputDecoration(
+                           labelText: "Peso (Kg):",
+                           labelStyle: TextStyle(color: Colors.blueAccent)),
+                       textAlign: TextAlign.center,
+                       style: TextStyle(color: Colors.blueAccent, fontSize: 25.0),
+                       controller: weightController,
+                       validator: (value){
+                         if(value.isEmpty){
+                           return "Informe seu peso!";
+                         }
+                       },
+                     ),
+                     TextFormField(
+                       keyboardType: TextInputType.number,
+                       decoration: InputDecoration(
+                           labelText: "Altura (Cm):",
+                           labelStyle: TextStyle(color: Colors.blueAccent)),
+                       textAlign: TextAlign.center,
+                       style: TextStyle(color: Colors.blueAccent, fontSize: 25.0),
+                       controller: heightController,
+                       validator: (value){
+                         if(value.isEmpty){
+                           return "Informe sua altura!";
+                         }
+                       },
+                     ),
+                     Padding(
+                       padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+                       child: Container(
+                         height: 50.0,
+                         child: RaisedButton(
+                             onPressed: (){
+                               if(_formKey.currentState.validate()){
+                                 _calculate();
+                               }
+                             },
+                             child: Text("Calcular",
+                               style: TextStyle(
+                                   color: Colors.white, fontSize: 25.0),),
+                             color: Colors.blueAccent
+                         ),
                        ),
                      ),
-                   ),
-                   Text(
-                     _infoText,
-                     textAlign: TextAlign.center,
-                     style: TextStyle(
-                         color: Colors.blueAccent, fontSize: 25.0),)
-                 ],
+                     Text(
+                       _infoText,
+                       textAlign: TextAlign.center,
+                       style: TextStyle(
+                           color: Colors.blueAccent, fontSize: 25.0),)
+                   ],
+                 ),
                ),
              )
          );
